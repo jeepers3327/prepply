@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  phoenix:
+    build: ./server
+    depends_on:
+      - postgres
+    ports:
+      - 4000:4000 # App
+      - 4002:4002 # Test
+    volumes:
+      - ./server:/app
+  
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PG_DATA: /var/lib/postgresql/data/pgdata
+      POOL: 100
+    restart: always
+    ports:
+      - 15432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
