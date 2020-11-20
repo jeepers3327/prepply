@@ -9,8 +9,9 @@ RUN apt-get update && \
     mix archive.install hex phx_new 1.5.3 --force && \
     mix local.rebar --force
 
-ENV APP_HOME /app
-RUN mkdir $APP_HOME
-WORKDIR $APP_HOME
+COPY . /app
+WORKDIR /app
 
-CMD ["mix", "phx.server"]
+COPY ./entrypoint.sh /entrypoint.sh
+RUN ["chmod", "+x", "/entrypoint.sh"]
+ENTRYPOINT ["/entrypoint.sh"]
