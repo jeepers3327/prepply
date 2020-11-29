@@ -23,3 +23,10 @@ Easily monitor the status of employee onboarding requirements
 * React
 * Tailwind
 * Nginx
+
+# Server
+[] Create user accounts
+[] Create employee profile
+[] Create employee checklist
+[] List of employees with checklist
+[] Status of each checklist
