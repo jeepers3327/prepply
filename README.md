@@ -24,9 +24,44 @@ Easily monitor the status of employee onboarding requirements
 * Tailwind
 * Nginx
 
-# Server
-[] Create user accounts
-[] Create employee profile
-[] Create employee checklist
-[] List of employees with checklist
-[] Status of each checklist
+# Server implementation checklist
+- [ ] Create user accounts
+- [ ] Create employee profile
+- [ ] Create employee checklist
+- [ ] List of employees with checklist
+- [ ] Status of each checklist
+
+
+User account
+- id
+- username
+- password
+- role
+
+Employee Profile
+- profile_id
+- user_id
+- name
+- mobile number
+
+Employee checklist
+- id
+- profile_id
+- item_id
+- file path
+- status
+
+Checklist Items
+- name
+- description
+- is online submit
+
+checklist_template
+- id
+- name
+
+checklist
+- id
+- template_id
+- item_id
+
