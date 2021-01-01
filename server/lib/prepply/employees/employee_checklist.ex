@@ -5,8 +5,8 @@ defmodule Prepply.Employees.EmployeeChecklist do
   schema "employee_checklists" do
     field :file_path, :string
     field :status, :string
-    field :employee_id, :id
-    field :item_id, :id
+    belongs_to :employee_profile, Prepply.Employees.EmployeeProfile
+    belongs_to :checklist_item, Prepply.Onboarding.ChecklistItem
 
     timestamps()
   end
