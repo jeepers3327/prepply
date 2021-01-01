@@ -24,18 +24,18 @@ defmodule Prepply.Accounts do
   @doc """
   Gets a single user.
 
-  Raises `Ecto.NoResultsError` if the User does not exist.
+  Returns `nil` if the User does not exist.
 
   ## Examples
 
-      iex> get_user!(123)
+      iex> get_user(123)
       %User{}
 
-      iex> get_user!(456)
-      ** (Ecto.NoResultsError)
+      iex> get_user(456)
+      nil
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id)
 
   @doc """
   Creates a user.
@@ -101,4 +101,16 @@ defmodule Prepply.Accounts do
   def change_user(%User{} = user, attrs \\ %{}) do
     User.changeset(user, attrs)
   end
+
+  def authenticate(username, password) do
+    user = Repo.get_by(User, username: username)
+
+    case check_password(user, password) do
+      true -> {:ok, user}
+      _ -> :error
+    end
+  end
+
+  defp check_password(nil, _), do: Argon2.no_user_verify()
+  defp check_password(user, password), do: Argon2.verify_pass(password, user.password_hash)
 end
