@@ -5,8 +5,10 @@ defmodule Prepply.Employees do
 
   import Ecto.Query, warn: false
   alias Prepply.Repo
+  alias Ecto.Multi
 
-  alias Prepply.Employees.EmployeeProfile
+  alias Prepply.Employees.{EmployeeProfile, EmployeeChecklist}
+  alias Prepply.Accounts.User
 
   @doc """
   Returns the list of employee_profiles.
@@ -196,5 +198,37 @@ defmodule Prepply.Employees do
   """
   def change_employee_checklist(%EmployeeChecklist{} = employee_checklist, attrs \\ %{}) do
     EmployeeChecklist.changeset(employee_checklist, attrs)
+  end
+
+  def list_employees do
+    Repo.all(EmployeeProfile)
+  end
+
+  def create_employee(attrs \\ %{}) do
+    Multi.new()
+    |> Multi.insert(:account, User.changeset(%User{}, attrs))
+    |> Multi.insert(:profile, fn %{account: account} ->
+      EmployeeProfile.changeset(%EmployeeProfile{user_id: account.id}, attrs)
+    end)
+    |> Multi.merge(fn %{profile: profile} ->
+      get_item_ids_from_template(attrs)
+      |> Enum.reduce(Multi.new(), fn id, multi ->
+        employee = %EmployeeChecklist{employee_profile_id: profile.id, checklist_item_id: id}
+
+        Multi.insert(
+          multi,
+          {:employee_checklist, id},
+          EmployeeChecklist.changeset(employee, attrs)
+        )
+      end)
+    end)
+    |> Repo.transaction()
+  end
+
+  defp get_item_ids_from_template(attrs) do
+    IO.inspect(attrs)
+    id = Map.get(attrs, "template_id")
+    IO.inspect(id)
+    Checklist |> where([c], c.template_id == ^id) |> select([c], c.item_id) |> Repo.all()
   end
 end
