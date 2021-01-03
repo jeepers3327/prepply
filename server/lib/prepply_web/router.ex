@@ -3,10 +3,15 @@ defmodule PrepplyWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug PrepplyWeb.Plugs.SetCurrentUser
   end
 
-  scope "/api", PrepplyWeb do
-    pipe_through :api
+  scope "/api" do
+    forward "/", Absinthe.Plug, schema: PrepplyWeb.Schema
+  end
+
+  if Mix.env() == :dev do
+    forward "/graphiql", Absinthe.Plug.GraphiQL, schema: PrepplyWeb.Schema
   end
 
   # Enables LiveDashboard only for development
