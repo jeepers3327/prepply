@@ -15,6 +15,6 @@ defmodule Prepply.Employees.EmployeeChecklist do
   def changeset(employee_checklist, attrs) do
     employee_checklist
     |> cast(attrs, [:file_path, :status])
-    |> validate_required([:due_date, :file_path, :status])
+    |> validate_required([:employee_profile_id, :checklist_item_id])
   end
 end
