@@ -5,8 +5,9 @@ defmodule Prepply.Onboarding do
 
   import Ecto.Query, warn: false
   alias Prepply.Repo
+  alias Ecto.Multi
 
-  alias Prepply.Onboarding.ChecklistItem
+  alias Prepply.Onboarding.{Checklist, ChecklistItem, ChecklistTemplate}
 
   @doc """
   Returns the list of checklist_items.
@@ -100,5 +101,31 @@ defmodule Prepply.Onboarding do
   """
   def change_checklist_item(%ChecklistItem{} = checklist_item, attrs \\ %{}) do
     ChecklistItem.changeset(checklist_item, attrs)
+  end
+
+  def create_checklist(attrs \\ %{}) do
+    Multi.new()
+    |> Multi.insert(:template, ChecklistTemplate.changeset(%ChecklistTemplate{}, attrs))
+    |> Multi.merge(fn _ ->
+      items = Map.get(attrs, "items")
+
+      items
+      |> Enum.with_index()
+      |> Enum.reduce(Multi.new(), fn {item, idx}, multi ->
+        Multi.insert(multi, {:item, idx}, ChecklistItem.changeset(%ChecklistItem{}, item))
+      end)
+    end)
+    |> Multi.merge(fn result ->
+      template = Map.get(result, :template)
+      max = length(attrs["items"]) - 1
+
+      0..max
+      |> Enum.reduce(Multi.new(), fn id, multi ->
+        item = Map.get(result, {:item, id})
+        changeset = %Checklist{checklist_template_id: template.id, checklist_item_id: item.id}
+        Multi.insert(multi, {:joined, id}, changeset)
+      end)
+    end)
+    |> Repo.transaction()
   end
 end
