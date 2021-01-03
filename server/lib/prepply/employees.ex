@@ -8,6 +8,7 @@ defmodule Prepply.Employees do
   alias Ecto.Multi
 
   alias Prepply.Employees.{EmployeeProfile, EmployeeChecklist}
+  alias Prepply.Onboarding.Checklist
   alias Prepply.Accounts.User
 
   @doc """
@@ -226,9 +227,20 @@ defmodule Prepply.Employees do
   end
 
   defp get_item_ids_from_template(attrs) do
-    IO.inspect(attrs)
-    id = Map.get(attrs, "template_id")
-    IO.inspect(id)
-    Checklist |> where([c], c.template_id == ^id) |> select([c], c.item_id) |> Repo.all()
+    id = Map.get(attrs, :template_id)
+
+    Checklist
+    |> where([c], c.checklist_template_id == ^id)
+    |> select([c], c.checklist_item_id)
+    |> Repo.all()
+  end
+
+  # For Absinthe Dataloader
+  def datasource() do
+    Dataloader.Ecto.new(Prepply.Repo, query: &query/2)
+  end
+
+  def query(queryable, _params) do
+    queryable
   end
 end
