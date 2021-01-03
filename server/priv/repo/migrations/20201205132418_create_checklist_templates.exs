@@ -7,6 +7,5 @@ defmodule Prepply.Repo.Migrations.CreateChecklistTemplates do
 
       timestamps()
     end
-
   end
 end
