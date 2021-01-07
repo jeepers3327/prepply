@@ -10,6 +10,14 @@ use Mix.Config
 config :prepply,
   ecto_repos: [Prepply.Repo]
 
+config :prepply, Prepply.Mailer,
+  adapter: Bamboo.SendGridAdapter,
+  api_key: "c6cdea386dc70ce2e4996c89f6dc8aa1-c50a0e68-da9850da",
+  domain: "sandboxf25257ed2463441da5734375e5543dd4.mailgun.org",
+  hackney_opts: [
+    recv_timeout: :timer.minutes(1)
+  ]
+
 # Configures the endpoint
 config :prepply, PrepplyWeb.Endpoint,
   url: [host: "localhost"],
