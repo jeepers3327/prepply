@@ -1,17 +1,24 @@
 defmodule PrepplyWeb.Schema.AccountTypes do
   use Absinthe.Schema.Notation
 
+  import Absinthe.Resolution.Helpers, only: [dataloader: 3]
+
   alias PrepplyWeb.Resolvers
+  alias Prepply.Employees
 
   object :user do
     field :id, :id
     field :username, :string
-    field :employee_profile, :employee
+    field :profile, :employee, resolve: dataloader(Employees, :employee_profile, [])
   end
 
   object :session do
     field :token, :string
     field :user, :user
+  end
+
+  object :result do
+    field :message, non_null(:string)
   end
 
   object :signin do
@@ -21,7 +28,13 @@ defmodule PrepplyWeb.Schema.AccountTypes do
 
       resolve(&Resolvers.Accounts.signin/3)
     end
+  end
 
+  object :forgot_password do
+    field :forgot_password, :result do
+      arg(:email, non_null(:string))
+      resolve(&Resolvers.Accounts.reset_password/3)
+    end
   end
 
   object :me do
