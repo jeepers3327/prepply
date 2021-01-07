@@ -227,7 +227,7 @@ defmodule Prepply.Employees do
   end
 
   defp get_item_ids_from_template(attrs) do
-    id = Map.get(attrs, :template_id)
+    id = Map.get(attrs, :template_id) || Map.get(attrs, "template_id")
 
     Checklist
     |> where([c], c.checklist_template_id == ^id)
