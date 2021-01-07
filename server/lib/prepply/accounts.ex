@@ -37,6 +37,8 @@ defmodule Prepply.Accounts do
   """
   def get_user(id), do: Repo.get(User, id)
 
+  def get_user_by_email(email), do: Repo.get(User, email: email)
+
   @doc """
   Creates a user.
 
@@ -113,4 +115,17 @@ defmodule Prepply.Accounts do
 
   defp check_password(nil, _), do: Argon2.no_user_verify()
   defp check_password(user, password), do: Argon2.verify_pass(password, user.password_hash)
+
+  def set_reset_password_token(user) do
+    User.reset_password_changeset(user, %{reset_password_token: generate_reset_password_token()})
+    |> Repo.update()
+    |> case do
+      {:ok, user} -> user
+      {:error, _changeset} -> :error
+    end
+  end
+
+  defp generate_reset_password_token do
+    :crypto.strong_rand_bytes(64) |> Base.url_encode64()
+  end
 end
