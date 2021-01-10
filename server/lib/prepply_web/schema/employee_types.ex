@@ -36,4 +36,12 @@ defmodule PrepplyWeb.Schema.EmployeeTypes do
       resolve(&Resolvers.Employees.create_employee/2)
     end
   end
+
+  object :add_attachment do
+    field :add_attachment, :boolean do
+      arg(:attachments, non_null(:upload))
+
+      resolve(&Resolvers.Employees.upload_attachment/2)
+    end
+  end
 end

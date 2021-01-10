@@ -17,14 +17,21 @@ defmodule PrepplyWeb.Schema do
     import_fields(:signin)
 
     import_fields(:forgot_password)
+    import_fields(:add_attachment)
 
     field :upload_file, :string do
       arg(:attachments, non_null(:upload))
-      arg(:metadata, :upload)
 
       resolve(fn args, _ ->
-        #TODO: file upload
-        args.attachments
+        %Plug.Upload{path: path, filename: filename} = args.attachments
+
+        # filepath = "#{path}/#{filename}"
+
+        path
+        |> ExAws.S3.Upload.stream_file()
+        |> ExAws.S3.upload("prepplybucket", "attachments/#{filename}")
+        |> ExAws.request()
+
         {:ok, "success"}
       end)
     end
