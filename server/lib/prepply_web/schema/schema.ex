@@ -19,7 +19,6 @@ defmodule PrepplyWeb.Schema do
     import_fields(:forgot_password)
     import_fields(:add_attachment)
 
-    end
   end
 
   def context(ctx) do
