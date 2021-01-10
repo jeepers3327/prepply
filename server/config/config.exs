@@ -18,6 +18,16 @@ config :prepply, Prepply.Mailer,
     recv_timeout: :timer.minutes(1)
   ]
 
+config :ex_aws,
+  json_codec: Jason,
+  access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
+  secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY"),
+  s3: [
+    scheme: "https://",
+    region: "ap-southeast-1",
+    host: "s3-ap-southeast-1.amazonaws.com"
+  ]
+
 # Configures the endpoint
 config :prepply, PrepplyWeb.Endpoint,
   url: [host: "localhost"],
