@@ -49,7 +49,6 @@ defmodule Prepply.MixProject do
       {:dataloader, "~> 1.0.0"},
       {:argon2_elixir, "~> 2.3"},
       {:bamboo, "~> 1.6"},
-      {:waffle, "~> 1.1.3"},
       {:ex_aws, "~> 2.1.2"},
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
