@@ -113,8 +113,13 @@ defmodule Prepply.Accounts do
     end
   end
 
-  defp check_password(nil, _), do: Argon2.no_user_verify()
-  defp check_password(user, password), do: Argon2.verify_pass(password, user.password_hash)
+  def reset_password(token, password) do
+    user = Repo.get(User, reset_password_token: token)
+    case user do
+      nil ->  {:error, :token_not_found}
+      user -> update_user(user, %{password: password})
+    end
+  end
 
   def set_reset_password_token(user) do
     User.reset_password_changeset(user, %{reset_password_token: generate_reset_password_token()})
@@ -124,6 +129,10 @@ defmodule Prepply.Accounts do
       {:error, _changeset} -> :error
     end
   end
+
+
+  defp check_password(nil, _), do: Argon2.no_user_verify()
+  defp check_password(user, password), do: Argon2.verify_pass(password, user.password_hash)
 
   defp generate_reset_password_token do
     :crypto.strong_rand_bytes(64) |> Base.url_encode64()

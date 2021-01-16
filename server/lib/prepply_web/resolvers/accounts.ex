@@ -14,7 +14,7 @@ defmodule PrepplyWeb.Resolvers.Accounts do
     end
   end
 
-  def reset_password(_, %{email: email}, _) do
+  def send_reset_password(_, %{email: email}, _) do
     case Accounts.get_user_by_email(email) do
       nil ->
         {:error, "Email not found!"}
@@ -31,6 +31,14 @@ defmodule PrepplyWeb.Resolvers.Accounts do
 
             {:ok, %{message: "Reset password email sent!"}}
         end
+    end
+  end
+
+  def reset_password(_, %{reset_password_token: token, new_password: password}, _) do
+    case Accounts.reset_password(token, password) do
+      {:error, :token_not_found} -> {:error, %{message: "Invalid reset token!"}}
+      {:error, _user} -> {:error, %{message: "An error occured!"}}
+      {:ok, _user} -> {:ok, %{message: "Password has been reset!"}}
     end
   end
 

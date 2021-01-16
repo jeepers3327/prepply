@@ -10,6 +10,7 @@ defmodule PrepplyWeb.Schema do
 
   query do
     import_fields(:get_employees)
+    import_fields(:me)
   end
 
   mutation do
@@ -18,6 +19,7 @@ defmodule PrepplyWeb.Schema do
 
     import_fields(:forgot_password)
     import_fields(:add_attachment)
+
 
   end
 
